@@ -1,41 +1,31 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import MainScreen from './src/screens/MainScreen';
+import CurrencyPickerScreen from './src/screens/CurrencyPickerScreen';
+import CalculatorScreen from './src/screens/CalculatorScreen';
+import { ThemeProvider, useAppTheme } from './src/theme';
 
-function App(): React.JSX.Element {
+const Stack = createStackNavigator();
+
+const AppNavigator = () => {
+  const { navTheme } = useAppTheme();
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Currency Converter</Text>
-        <Text style={styles.subtitle}>Приложение будет здесь</Text>
-      </View>
-    </SafeAreaView>
+    <NavigationContainer theme={navTheme}>
+      <Stack.Navigator>
+        <Stack.Screen name="Main" component={MainScreen} options={{ title: 'Конвертер валют' }} />
+        <Stack.Screen name="CurrencyPicker" component={CurrencyPickerScreen} options={{ title: 'Выбор валюты' }} />
+        <Stack.Screen name="Calculator" component={CalculatorScreen} options={{ title: 'Калькулятор' }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-  },
-});
+const App = () => (
+  <ThemeProvider>
+    <AppNavigator />
+  </ThemeProvider>
+);
 
 export default App;
