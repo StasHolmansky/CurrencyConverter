@@ -4,7 +4,6 @@ import axios from 'axios';
 const FIAT_API = 'https://open.er-api.com/v6/latest/USD';
 const CRYPTO_API = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=usd';
 const STORAGE_KEY = 'cached_rates_v3';
-const REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
 
 const CRYPTO_ID_TO_CODE: Record<string, string> = {
   bitcoin: 'BTC',
@@ -68,10 +67,7 @@ export const loadRates = async (onUpdate?: (rates: Record<string, number>) => vo
   };
 
   if (cached) {
-    const isStale = Date.now() - cached.timestamp > REFRESH_INTERVAL;
-    if (isStale) {
-      refreshInBackground();
-    }
+    refreshInBackground();
     return cached.rates;
   }
 
