@@ -51,8 +51,9 @@ const MainScreen = ({ navigation }: any) => {
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
     const onShow = Keyboard.addListener(showEvent, (e) => {
+      const extraOffset = Platform.OS === 'android' ? 48 : 0;
       Animated.timing(keyboardHeight, {
-        toValue: e.endCoordinates.height,
+        toValue: e.endCoordinates.height + extraOffset,
         duration: Platform.OS === 'ios' ? e.duration : 200,
         useNativeDriver: false,
       }).start();
