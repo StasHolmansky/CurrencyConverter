@@ -1,18 +1,44 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const API_BASE = 'https://open.er-api.com/v6/latest/USD';
-const STORAGE_KEY = 'cached_rates_v2';
+const FIAT_API = 'https://open.er-api.com/v6/latest/USD';
+const CRYPTO_API = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=usd';
+const STORAGE_KEY = 'cached_rates_v3';
 const REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
+
+const CRYPTO_ID_TO_CODE: Record<string, string> = {
+  bitcoin: 'BTC',
+  ethereum: 'ETH',
+  tether: 'USDT',
+};
 
 interface RatesCache {
   timestamp: number;
   rates: Record<string, number>;
 }
 
+const fetchCryptoRates = async (): Promise<Record<string, number>> => {
+  try {
+    const response = await axios.get(CRYPTO_API);
+    const result: Record<string, number> = {};
+    for (const [id, code] of Object.entries(CRYPTO_ID_TO_CODE)) {
+      const priceInUsd = response.data[id]?.usd;
+      if (priceInUsd && priceInUsd > 0) {
+        result[code] = 1 / priceInUsd;
+      }
+    }
+    return result;
+  } catch {
+    return {};
+  }
+};
+
 export const fetchFreshRates = async (): Promise<Record<string, number>> => {
-  const response = await axios.get(API_BASE);
-  return response.data.rates;
+  const [fiatResponse, cryptoRates] = await Promise.all([
+    axios.get(FIAT_API),
+    fetchCryptoRates(),
+  ]);
+  return { ...fiatResponse.data.rates, ...cryptoRates };
 };
 
 export const cacheRates = async (rates: Record<string, number>) => {

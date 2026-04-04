@@ -17,6 +17,13 @@ import { loadRates } from '../services/CurrencyService';
 import { buildCurrencyList } from '../utils/currencyList';
 import { useAppTheme } from '../theme';
 
+function formatAmount(value: string): string {
+  if (!value) return '';
+  const parts = value.split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  return parts.join('.');
+}
+
 const STORAGE_ROWS_KEY = 'currency_rows';
 const MAX_ROWS = 10;
 
@@ -122,9 +129,29 @@ const MainScreen = ({ navigation }: any) => {
   };
 
   const handleAmountChange = (id: string, text: string) => {
-    const num = parseFloat(text);
-    if (isNaN(num)) return;
-    recalcAllAmounts(rates, id, num);
+    const raw = text.replace(/\s/g, '');
+    const num = parseFloat(raw);
+    const value = isNaN(num) ? 0 : num;
+
+    setRows(prev => {
+      if (Object.keys(rates).length === 0) {
+        return prev.map(row => row.id === id ? { ...row, amount: raw } : row);
+      }
+
+      const baseRow = prev.find(r => r.id === id);
+      if (!baseRow) return prev;
+
+      const baseRateToUSD = rates[baseRow.code] || 1;
+      const amountInUSD = value / baseRateToUSD;
+
+      return prev.map(row => {
+        if (row.id === id) {
+          return { ...row, amount: raw };
+        }
+        const rate = rates[row.code] || 1;
+        return { ...row, amount: (amountInUSD * rate).toFixed(2) };
+      });
+    });
   };
 
   const handleDeleteRow = (rowId: string) => {
@@ -187,7 +214,7 @@ const MainScreen = ({ navigation }: any) => {
             key={row.id}
             flag={row.flag}
             currencyCode={row.code}
-            amount={row.amount}
+            amount={formatAmount(row.amount)}
             colors={colors}
             onPressCurrency={() => handleOpenCurrencyPicker(row.id)}
             onAmountChange={(text) => handleAmountChange(row.id, text)}
