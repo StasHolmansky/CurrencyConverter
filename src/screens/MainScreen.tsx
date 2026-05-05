@@ -44,6 +44,14 @@ function normalizeDecimalInput(value: string): string {
 
 const STORAGE_ROWS_KEY = 'currency_rows';
 const MAX_ROWS = 10;
+const ROW_DRAG_STEP = 76;
+
+type CurrencyRowData = {
+  id: string;
+  code: string;
+  flag: string;
+  amount: string;
+};
 
 const MainScreen = ({ navigation }: any) => {
   const { colors, isDark, toggleTheme } = useAppTheme();
@@ -67,10 +75,11 @@ const MainScreen = ({ navigation }: any) => {
       headerRight: renderHeaderRight,
     });
   }, [navigation, renderHeaderRight]);
-  const [rows, setRows] = useState<{ id: string; code: string; flag: string; amount: string }[]>([]);
+  const [rows, setRows] = useState<CurrencyRowData[]>([]);
   const [rates, setRates] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [activeRowId, setActiveRowId] = useState<string | null>(null);
+  const [draggingRowId, setDraggingRowId] = useState<string | null>(null);
 
   const keyboardHeight = useRef(new Animated.Value(0)).current;
 
@@ -187,6 +196,38 @@ const MainScreen = ({ navigation }: any) => {
     setRows(prev => prev.filter(r => r.id !== rowId));
   };
 
+  const handleDragStart = (rowId: string) => {
+    Keyboard.dismiss();
+    setActiveRowId(null);
+    setDraggingRowId(rowId);
+  };
+
+  const handleDragEnd = (rowId: string, distanceY: number) => {
+    setDraggingRowId(null);
+
+    const offset = Math.round(distanceY / ROW_DRAG_STEP);
+    if (offset === 0) {
+      return;
+    }
+
+    setRows(prev => {
+      const fromIndex = prev.findIndex(row => row.id === rowId);
+      if (fromIndex < 0) {
+        return prev;
+      }
+
+      const toIndex = Math.max(0, Math.min(prev.length - 1, fromIndex + offset));
+      if (toIndex === fromIndex) {
+        return prev;
+      }
+
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+  };
+
   const handleOpenCurrencyPicker = (rowId: string) => {
     const currencies = buildCurrencyList(Object.keys(rates));
     navigation.navigate('CurrencyPicker', {
@@ -264,6 +305,9 @@ const MainScreen = ({ navigation }: any) => {
             onAmountChange={(text) => handleAmountChange(row.id, text)}
             onFocus={() => setActiveRowId(row.id)}
             onDelete={() => handleDeleteRow(row.id)}
+            onDragStart={rows.length > 1 ? () => handleDragStart(row.id) : undefined}
+            onDragEnd={rows.length > 1 ? (distanceY) => handleDragEnd(row.id, distanceY) : undefined}
+            isDragging={draggingRowId === row.id}
           />
         ))}
         {rows.length < MAX_ROWS && (

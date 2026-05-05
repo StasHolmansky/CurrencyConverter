@@ -1,5 +1,13 @@
 import React, { useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  PanResponder,
+} from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { AppColors } from '../theme';
 
@@ -12,6 +20,9 @@ interface Props {
   onAmountChange: (text: string) => void;
   onFocus?: () => void;
   onDelete?: () => void;
+  onDragStart?: () => void;
+  onDragEnd?: (distanceY: number) => void;
+  isDragging?: boolean;
 }
 
 const CurrencyRow: React.FC<Props> = ({
@@ -23,8 +34,39 @@ const CurrencyRow: React.FC<Props> = ({
   onAmountChange,
   onFocus,
   onDelete,
+  onDragStart,
+  onDragEnd,
+  isDragging,
 }) => {
   const swipeableRef = useRef<Swipeable>(null);
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  const resetDragPosition = () => {
+    Animated.spring(translateY, {
+      toValue: 0,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => Boolean(onDragEnd),
+      onMoveShouldSetPanResponder: (_event, gestureState) =>
+        Boolean(onDragEnd) && Math.abs(gestureState.dy) > 4,
+      onPanResponderGrant: () => {
+        swipeableRef.current?.close();
+        onDragStart?.();
+      },
+      onPanResponderMove: (_event, gestureState) => {
+        translateY.setValue(gestureState.dy);
+      },
+      onPanResponderRelease: (_event, gestureState) => {
+        onDragEnd?.(gestureState.dy);
+        resetDragPosition();
+      },
+      onPanResponderTerminate: resetDragPosition,
+    }),
+  ).current;
 
   const renderRightActions = (
     _progress: Animated.AnimatedInterpolation<number>,
@@ -52,32 +94,57 @@ const CurrencyRow: React.FC<Props> = ({
   };
 
   return (
-    <Swipeable
-      ref={swipeableRef}
-      renderRightActions={onDelete ? renderRightActions : undefined}
-      overshootRight={false}
-      friction={2}
+    <Animated.View
+      style={[
+        styles.dragContainer,
+        isDragging && styles.dragging,
+        { transform: [{ translateY }] },
+      ]}
     >
-      <View style={[styles.row, { backgroundColor: colors.card }]}>
-        <TouchableOpacity onPress={onPressCurrency} style={styles.currencySelector}>
-          <Text style={styles.flag}>{flag}</Text>
-          <Text style={[styles.code, { color: colors.text }]}>{currencyCode}</Text>
-        </TouchableOpacity>
-        <TextInput
-          style={[styles.input, { color: colors.text, borderBottomColor: colors.inputBorder }]}
-          keyboardType="decimal-pad"
-          value={amount}
-          onChangeText={onAmountChange}
-          onFocus={onFocus}
-          placeholder="0"
-          placeholderTextColor={colors.placeholder}
-        />
-      </View>
-    </Swipeable>
+      <Swipeable
+        ref={swipeableRef}
+        enabled={!isDragging}
+        renderRightActions={onDelete ? renderRightActions : undefined}
+        overshootRight={false}
+        friction={2}
+      >
+        <View style={[styles.row, { backgroundColor: colors.card }]}>
+          <TouchableOpacity onPress={onPressCurrency} style={styles.currencySelector}>
+            <Text style={styles.flag}>{flag}</Text>
+            <Text style={[styles.code, { color: colors.text }]}>{currencyCode}</Text>
+          </TouchableOpacity>
+          <TextInput
+            style={[styles.input, { color: colors.text, borderBottomColor: colors.inputBorder }]}
+            keyboardType="decimal-pad"
+            value={amount}
+            onChangeText={onAmountChange}
+            onFocus={onFocus}
+            placeholder="0"
+            placeholderTextColor={colors.placeholder}
+          />
+          <View
+            accessibilityRole="adjustable"
+            accessibilityLabel={`Перетащить ${currencyCode}`}
+            style={styles.dragHandle}
+            {...panResponder.panHandlers}
+          >
+            <Text style={[styles.dragHandleText, { color: colors.textSecondary }]}>☰</Text>
+          </View>
+        </View>
+      </Swipeable>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
+  dragContainer: {
+    zIndex: 0,
+  },
+  dragging: {
+    elevation: 8,
+    opacity: 0.96,
+    zIndex: 10,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -98,6 +165,17 @@ const styles = StyleSheet.create({
     padding: 8,
     borderBottomWidth: 1,
     textAlign: 'right',
+  },
+  dragHandle: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+    minHeight: 44,
+    width: 32,
+  },
+  dragHandleText: {
+    fontSize: 22,
+    fontWeight: '700',
   },
   deleteAction: {
     justifyContent: 'center',
