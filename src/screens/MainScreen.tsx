@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
@@ -11,6 +10,7 @@ import {
   Animated,
   Platform,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CurrencyRow from '../components/CurrencyRow';
 import { loadRates } from '../services/CurrencyService';
@@ -24,21 +24,49 @@ function formatAmount(value: string): string {
   return parts.join('.');
 }
 
+function normalizeDecimalInput(value: string): string {
+  let normalized = '';
+  let hasSeparator = false;
+
+  for (const char of value.replace(/\s/g, '').replace(',', '.')) {
+    if (/\d/.test(char)) {
+      normalized += char;
+      continue;
+    }
+    if (char === '.' && !hasSeparator) {
+      normalized += char;
+      hasSeparator = true;
+    }
+  }
+
+  return normalized;
+}
+
 const STORAGE_ROWS_KEY = 'currency_rows';
 const MAX_ROWS = 10;
 
 const MainScreen = ({ navigation }: any) => {
   const { colors, isDark, toggleTheme } = useAppTheme();
 
+  const renderHeaderRight = useCallback(() => (
+    <View style={styles.headerActions}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Feedback')}
+        style={[styles.headerButton, { borderColor: colors.border }]}
+      >
+        <Text style={[styles.headerButtonText, { color: colors.accent }]}>Связь</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={toggleTheme} style={styles.themeButton}>
+        <Text style={styles.themeText}>{isDark ? '☀️' : '🌙'}</Text>
+      </TouchableOpacity>
+    </View>
+  ), [navigation, colors.accent, colors.border, isDark, toggleTheme]);
+
   useEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={toggleTheme} style={{ marginRight: 16 }}>
-          <Text style={{ fontSize: 22 }}>{isDark ? '☀️' : '🌙'}</Text>
-        </TouchableOpacity>
-      ),
+      headerRight: renderHeaderRight,
     });
-  }, [navigation, isDark, toggleTheme]);
+  }, [navigation, renderHeaderRight]);
   const [rows, setRows] = useState<{ id: string; code: string; flag: string; amount: string }[]>([]);
   const [rates, setRates] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -130,7 +158,7 @@ const MainScreen = ({ navigation }: any) => {
   };
 
   const handleAmountChange = (id: string, text: string) => {
-    const raw = text.replace(/\s/g, '');
+    const raw = normalizeDecimalInput(text);
     const num = parseFloat(raw);
     const value = isNaN(num) ? 0 : num;
 
@@ -202,13 +230,28 @@ const MainScreen = ({ navigation }: any) => {
     });
   };
 
-  if (loading) return <ActivityIndicator size="large" style={{ flex: 1, backgroundColor: colors.background }} />;
+  if (loading) {
+    return (
+      <ActivityIndicator
+        size="large"
+        style={[styles.loader, { backgroundColor: colors.background }]}
+      />
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView
+      <KeyboardAwareScrollView
         style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        enableOnAndroid
+        enableResetScrollToCoords={false}
+        extraScrollHeight={28}
+        extraHeight={56}
+        keyboardOpeningTime={Platform.OS === 'android' ? 100 : undefined}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        showsVerticalScrollIndicator={false}
       >
         {rows.map(row => (
           <CurrencyRow
@@ -231,7 +274,7 @@ const MainScreen = ({ navigation }: any) => {
             <Text style={[styles.addText, { color: colors.text }]}>+ Добавить валюту</Text>
           </TouchableOpacity>
         )}
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       {activeRowId && (
         <Animated.View style={[styles.toolbar, { bottom: keyboardHeight, backgroundColor: colors.toolbar, borderTopColor: colors.border }]}>
@@ -255,7 +298,24 @@ const MainScreen = ({ navigation }: any) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
+  loader: { flex: 1 },
   scrollView: { flex: 1 },
+  scrollContent: { paddingBottom: 96 },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  headerButton: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginRight: 8,
+  },
+  headerButtonText: { fontSize: 14, fontWeight: '700' },
+  themeButton: { paddingHorizontal: 8, paddingVertical: 4 },
+  themeText: { fontSize: 22 },
   addButton: { padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
   addText: { fontSize: 16, fontWeight: '600' },
   toolbar: {
