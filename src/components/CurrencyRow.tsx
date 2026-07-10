@@ -80,7 +80,7 @@ const CurrencyRow: React.FC<Props> = ({
 
     return (
       <TouchableOpacity
-        style={[styles.deleteAction, { backgroundColor: colors.delete }]}
+        style={[styles.deleteAction, { backgroundColor: colors.danger }]}
         onPress={() => {
           swipeableRef.current?.close();
           onDelete?.();
@@ -108,13 +108,27 @@ const CurrencyRow: React.FC<Props> = ({
         overshootRight={false}
         friction={2}
       >
-        <View style={[styles.row, { backgroundColor: colors.card }]}>
+        <View
+          style={[
+            styles.row,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+            },
+          ]}
+        >
           <TouchableOpacity onPress={onPressCurrency} style={styles.currencySelector}>
             <Text style={styles.flag}>{flag}</Text>
-            <Text style={[styles.code, { color: colors.text }]}>{currencyCode}</Text>
+            <Text style={[styles.code, { color: colors.textPrimary }]}>{currencyCode}</Text>
           </TouchableOpacity>
           <TextInput
-            style={[styles.input, { color: colors.text, borderBottomColor: colors.inputBorder }]}
+            style={[
+              styles.input,
+              {
+                color: colors.textPrimary,
+                borderBottomColor: colors.border,
+              },
+            ]}
             keyboardType="decimal-pad"
             value={amount}
             onChangeText={onAmountChange}
@@ -151,10 +165,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   currencySelector: { flexDirection: 'row', alignItems: 'center', width: 110 },
   flag: { fontSize: 28, marginRight: 8 },

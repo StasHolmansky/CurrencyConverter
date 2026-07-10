@@ -43,7 +43,14 @@ const CurrencyPickerScreen: React.FC<Props> = ({ navigation, route }) => {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <TextInput
-        style={[styles.searchInput, { borderColor: colors.inputBorder, backgroundColor: colors.card, color: colors.text }]}
+        style={[
+          styles.searchInput,
+          {
+            borderColor: colors.border,
+            backgroundColor: colors.inputBg,
+            color: colors.textPrimary,
+          },
+        ]}
         placeholder="Поиск (USD, рубль, Россия, Japan...)"
         placeholderTextColor={colors.placeholder}
         value={search}
@@ -55,12 +62,12 @@ const CurrencyPickerScreen: React.FC<Props> = ({ navigation, route }) => {
         keyExtractor={(item) => item.code}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={[styles.item, { borderBottomColor: colors.border }]}
+            style={[styles.item, { borderBottomColor: colors.rowSeparator }]}
             onPress={() => selectCurrency(item.code, item.flag)}
           >
             <Text style={styles.flag}>{item.flag}</Text>
             <View style={styles.textContainer}>
-              <Text style={[styles.code, { color: colors.text }]}>{item.code}</Text>
+              <Text style={[styles.code, { color: colors.textPrimary }]}>{item.code}</Text>
               <Text style={[styles.name, { color: colors.textSecondary }]} numberOfLines={1}>{item.name}</Text>
             </View>
           </TouchableOpacity>

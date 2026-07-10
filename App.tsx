@@ -6,11 +6,13 @@ import MainScreen from './src/screens/MainScreen';
 import CurrencyPickerScreen from './src/screens/CurrencyPickerScreen';
 import CalculatorScreen from './src/screens/CalculatorScreen';
 import FeedbackScreen from './src/screens/FeedbackScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 import { ThemeProvider, useAppTheme } from './src/theme';
 import type { CurrencyItem } from './src/utils/currencyList';
 
 export type RootStackParamList = {
   Main: undefined;
+  Settings: undefined;
   CurrencyPicker: {
     currencies: CurrencyItem[];
     onSelect: (currencyCode: string, flag: string) => void;
@@ -37,7 +39,7 @@ function HeaderBackButton({ tintColor, onPress }: { tintColor?: string; onPress?
 }
 
 const AppNavigator = () => {
-  const { navTheme } = useAppTheme();
+  const { navTheme, colors } = useAppTheme();
 
   return (
     <NavigationContainer theme={navTheme}>
@@ -45,12 +47,20 @@ const AppNavigator = () => {
         screenOptions={{
           headerShadowVisible: false,
           headerTitleStyle: { fontWeight: '600' },
-          headerStyle: { backgroundColor: navTheme.colors.card },
-          headerTintColor: navTheme.colors.text,
-          cardStyle: { backgroundColor: navTheme.colors.background },
+          headerStyle: { backgroundColor: colors.headerBg },
+          headerTintColor: colors.textPrimary,
+          cardStyle: { backgroundColor: colors.background },
         }}
       >
         <Stack.Screen name="Main" component={MainScreen} options={{ title: 'Конвертер валют' }} />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            title: 'Настройки',
+            headerLeft: HeaderBackButton,
+          }}
+        />
         <Stack.Screen name="CurrencyPicker" component={CurrencyPickerScreen} options={{ title: 'Выбор валюты' }} />
         <Stack.Screen name="Calculator" component={CalculatorScreen} options={{ title: 'Калькулятор' }} />
         <Stack.Screen
@@ -58,7 +68,6 @@ const AppNavigator = () => {
           component={FeedbackScreen}
           options={{
             title: 'Обратная связь',
-            headerTintColor: navTheme.colors.primary,
             headerLeft: HeaderBackButton,
           }}
         />

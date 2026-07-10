@@ -54,21 +54,20 @@ type CurrencyRowData = {
 };
 
 const MainScreen = ({ navigation }: any) => {
-  const { colors, isDark, toggleTheme } = useAppTheme();
+  const { colors } = useAppTheme();
 
   const renderHeaderRight = useCallback(() => (
     <View style={styles.headerActions}>
       <TouchableOpacity
-        onPress={() => navigation.navigate('Feedback')}
-        style={[styles.headerButton, { borderColor: colors.border }]}
+        onPress={() => navigation.navigate('Settings')}
+        style={[styles.headerButton, { borderColor: colors.border, backgroundColor: colors.card }]}
+        accessibilityRole="button"
+        accessibilityLabel="Настройки"
       >
-        <Text style={[styles.headerButtonText, { color: colors.accent }]}>Связь</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={toggleTheme} style={styles.themeButton}>
-        <Text style={styles.themeText}>{isDark ? '☀️' : '🌙'}</Text>
+        <Text style={[styles.headerButtonText, { color: colors.textPrimary }]}>⚙️</Text>
       </TouchableOpacity>
     </View>
-  ), [navigation, colors.accent, colors.border, isDark, toggleTheme]);
+  ), [navigation, colors.border, colors.card, colors.textPrimary]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -312,21 +311,27 @@ const MainScreen = ({ navigation }: any) => {
         ))}
         {rows.length < MAX_ROWS && (
           <TouchableOpacity
-            style={[styles.addButton, { backgroundColor: colors.addButton }]}
+            style={[
+              styles.addButton,
+              {
+                backgroundColor: colors.chipInactiveBg,
+                borderColor: colors.border,
+              },
+            ]}
             onPress={addNewCurrency}
           >
-            <Text style={[styles.addText, { color: colors.text }]}>+ Добавить валюту</Text>
+            <Text style={[styles.addText, { color: colors.textPrimary }]}>+ Добавить валюту</Text>
           </TouchableOpacity>
         )}
       </KeyboardAwareScrollView>
 
       {activeRowId && (
-        <Animated.View style={[styles.toolbar, { bottom: keyboardHeight, backgroundColor: colors.toolbar, borderTopColor: colors.border }]}>
+        <Animated.View style={[styles.toolbar, { bottom: keyboardHeight, backgroundColor: colors.surface, borderTopColor: colors.border }]}>
           <TouchableOpacity
-            style={[styles.toolbarButton, { backgroundColor: colors.toolbarButton }]}
+            style={[styles.toolbarButton, { backgroundColor: colors.card, borderColor: colors.border }]}
             onPress={handleOpenCalculator}
           >
-            <Text style={[styles.toolbarButtonText, { color: colors.text }]}>🧮 Калькулятор</Text>
+            <Text style={[styles.toolbarButtonText, { color: colors.textPrimary }]}>🧮 Калькулятор</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.toolbarDone}
@@ -352,15 +357,18 @@ const styles = StyleSheet.create({
   },
   headerButton: {
     borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 999,
+    borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    marginRight: 8,
   },
-  headerButtonText: { fontSize: 14, fontWeight: '700' },
-  themeButton: { paddingHorizontal: 8, paddingVertical: 4 },
-  themeText: { fontSize: 22 },
-  addButton: { padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 8 },
+  headerButtonText: { fontSize: 18, fontWeight: '700' },
+  addButton: {
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   addText: { fontSize: 16, fontWeight: '600' },
   toolbar: {
     position: 'absolute',
@@ -376,11 +384,8 @@ const styles = StyleSheet.create({
   toolbarButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 8,
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   toolbarButtonText: { fontSize: 16, fontWeight: '500' },
   toolbarDone: {

@@ -46,8 +46,8 @@ const CalculatorScreen: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.display, { backgroundColor: colors.card }]}>
-        <Text style={[styles.expression, { color: colors.text }]}>{expression || '0'}</Text>
+      <View style={[styles.display, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <Text style={[styles.expression, { color: colors.textPrimary }]}>{expression || '0'}</Text>
       </View>
       <View style={styles.buttons}>
         {buttons.map((row, i) => (
@@ -57,18 +57,21 @@ const CalculatorScreen: React.FC<Props> = ({ navigation, route }) => {
                 key={btn}
                 style={[
                   styles.button,
-                  { backgroundColor: colors.card },
-                  isOp(btn) && { backgroundColor: colors.accent },
+                  {
+                    backgroundColor: colors.card,
+                    borderColor: colors.border,
+                  },
+                  isOp(btn) && { backgroundColor: colors.accent, borderColor: colors.accent },
                   btn === '=' && styles.equalButton,
-                  btn === '=' && { backgroundColor: '#4caf50' },
-                  btn === 'C' && { backgroundColor: colors.delete },
+                  btn === '=' && { backgroundColor: colors.success, borderColor: colors.success },
+                  btn === 'C' && { backgroundColor: colors.danger, borderColor: colors.danger },
                 ]}
                 onPress={() => handlePress(btn)}
               >
                 <Text style={[
                   styles.buttonText,
-                  { color: colors.text },
-                  (isOp(btn) || btn === '=' || btn === 'C') && { color: '#fff' },
+                  { color: colors.textPrimary },
+                  (isOp(btn) || btn === '=' || btn === 'C') && { color: colors.onAccent },
                 ]}>
                   {btn}
                 </Text>
@@ -83,11 +86,25 @@ const CalculatorScreen: React.FC<Props> = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  display: { flex: 1, justifyContent: 'center', alignItems: 'flex-end', padding: 20 },
+  display: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    padding: 20,
+    margin: 10,
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   expression: { fontSize: 48 },
   buttons: { flex: 2, padding: 10 },
   row: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 10 },
-  button: { padding: 20, borderRadius: 40, width: 80, alignItems: 'center', elevation: 2 },
+  button: {
+    padding: 20,
+    borderRadius: 40,
+    width: 80,
+    alignItems: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   equalButton: { width: 'auto', flex: 1 },
   buttonText: { fontSize: 28 },
 });

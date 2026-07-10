@@ -15,13 +15,13 @@ const FeedbackScreen = () => {
   const colors = useAppColors();
 
   const openEmail = () => {
-    const subject = encodeURIComponent(`Обратная связь по ${APP_DISPLAY_NAME}`);
+    const subject = encodeURIComponent(`Обратная связь ${APP_DISPLAY_NAME}`);
     const url = `mailto:${SUPPORT_EMAIL}?subject=${subject}`;
 
     Linking.openURL(url).catch(() => {
       Alert.alert(
-        'Почта недоступна',
-        `Не удалось открыть почтовое приложение. Напишите нам на ${SUPPORT_EMAIL}.`,
+        'Почтовое приложение не найдено',
+        `Пожалуйста, отправьте сообщение вручную на ${SUPPORT_EMAIL}.`,
       );
     });
   };
@@ -34,43 +34,47 @@ const FeedbackScreen = () => {
     >
       <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <Text
-          style={[styles.title, { color: colors.text }]}
+          style={[styles.title, { color: colors.textPrimary }]}
           numberOfLines={2}
           ellipsizeMode="tail"
         >
-          Обратная связь
+          Обратная связь и предложения
         </Text>
         <Text
           style={[styles.body, { color: colors.textSecondary }]}
           numberOfLines={6}
           ellipsizeMode="tail"
         >
-          Расскажите, что можно улучшить в конвертере валют: ошибки, пожелания по интерфейсу,
-          новые валюты или проблемы с курсами.
+          Если у вас есть идеи, пожелания или вы заметили, что в {APP_DISPLAY_NAME} можно
+          улучшить, напишите на почту поддержки ниже.
         </Text>
 
         <Text
-          style={[styles.emailLabel, { color: colors.textSecondary }]}
+          style={[styles.emailLabel, { color: colors.textMuted }]}
           numberOfLines={1}
           ellipsizeMode="tail"
         >
-          Email поддержки
+          Почта для связи
         </Text>
         <Pressable
           style={[styles.emailButton, { backgroundColor: colors.accent }]}
           onPress={openEmail}
         >
-          <Text style={styles.emailText} numberOfLines={1} ellipsizeMode="tail">
+          <Text
+            style={[styles.emailText, { color: colors.onAccent }]}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {SUPPORT_EMAIL}
           </Text>
         </Pressable>
 
         <Text
-          style={[styles.note, { color: colors.textSecondary }]}
+          style={[styles.note, { color: colors.textMuted }]}
           numberOfLines={4}
           ellipsizeMode="tail"
         >
-          При обращении укажите модель телефона, версию Android/iOS и короткое описание проблемы.
+          Спасибо, что помогаете делать приложение лучше.
         </Text>
       </View>
     </ScrollView>
@@ -118,7 +122,6 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
   },
   emailText: {
-    color: '#ffffff',
     fontSize: 16,
     fontWeight: '700',
     minWidth: 0,
