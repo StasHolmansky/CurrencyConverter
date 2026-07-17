@@ -1,0 +1,46 @@
+{
+  "common": {
+    "back": "Voltar",
+    "done": "Concluído",
+    "delete": "Excluir",
+    "error": "Erro"
+  },
+  "nav": {
+    "main": "Conversor de moedas",
+    "settings": "Configurações",
+    "currencyPicker": "Escolher moeda",
+    "calculator": "Calculadora",
+    "feedback": "Feedback"
+  },
+  "main": {
+    "settingsA11y": "Configurações",
+    "addCurrency": "+ Adicionar moeda",
+    "calculator": "🧮 Calculadora",
+    "limitTitle": "Limite",
+    "limitMessage": "Você não pode adicionar mais de {{max}} moedas",
+    "dragA11y": "Arrastar {{code}}"
+  },
+  "settings": {
+    "appearance": "Aparência",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Escuro",
+    "systemHint": "Sistema segue o modo claro/escuro do Android.",
+    "language": "Idioma",
+    "support": "Suporte",
+    "feedback": "Feedback e sugestões",
+    "feedbackHint": "Compartilhe ideias, pedidos ou problemas com o desenvolvedor."
+  },
+  "currencyPicker": {
+    "searchPlaceholder": "Buscar por código, país ou moeda…"
+  },
+  "feedback": {
+    "title": "Feedback e sugestões",
+    "body": "Se você tiver ideias, pedidos ou notar algo que possa ser melhorado no {{appName}}, escreva para o e-mail de suporte abaixo.",
+    "emailLabel": "E-mail de contato",
+    "emailSubject": "Feedback sobre o {{appName}}",
+    "note": "Obrigado por ajudar a melhorar o app.",
+    "emailUnavailableTitle": "App de e-mail não encontrado",
+    "emailUnavailableMessage": "Envie sua mensagem manualmente para {{email}}."
+  }
+}

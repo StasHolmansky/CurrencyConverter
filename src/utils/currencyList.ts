@@ -187,6 +187,34 @@ export function getFlagForCurrency(code: string): string {
   return String.fromCodePoint(c1 - 0x41 + 0x1F1E6, c2 - 0x41 + 0x1F1E6);
 }
 
+const LOCALIZED_NAME_CACHE = new Map<string, string>();
+const CRYPTO_NAMES: Record<string, Record<string, string>> = {
+  BTC: {
+    en: 'Bitcoin',
+    ru: 'Биткоин',
+    es: 'Bitcoin',
+    'pt-BR': 'Bitcoin',
+    fr: 'Bitcoin',
+    de: 'Bitcoin',
+  },
+  ETH: {
+    en: 'Ethereum',
+    ru: 'Эфириум',
+    es: 'Ethereum',
+    'pt-BR': 'Ethereum',
+    fr: 'Ethereum',
+    de: 'Ethereum',
+  },
+  USDT: {
+    en: 'Tether',
+    ru: 'Тезер',
+    es: 'Tether',
+    'pt-BR': 'Tether',
+    fr: 'Tether',
+    de: 'Tether',
+  },
+};
+
 const CURRENCY_KEYWORDS: Record<string, string> = {
   AED: 'ОАЭ Эмираты UAE United Arab Emirates',
   AFN: 'Афганистан Afghanistan',
@@ -355,8 +383,41 @@ const CURRENCY_KEYWORDS: Record<string, string> = {
   ZWL: 'Зимбабве Zimbabwe',
 };
 
-export function getCurrencyName(code: string): string {
-  return CURRENCY_NAMES[code] || code;
+export function getCurrencyName(code: string, language = 'ru'): string {
+  if (language.startsWith('ru')) {
+    return CURRENCY_NAMES[code] || code;
+  }
+
+  const cryptoName = CRYPTO_NAMES[code]?.[language] ??
+    CRYPTO_NAMES[code]?.[language.split('-')[0]];
+  if (cryptoName) {
+    return cryptoName;
+  }
+
+  const cacheKey = `${language}:${code}`;
+  const cached = LOCALIZED_NAME_CACHE.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  try {
+    const name = new Intl.NumberFormat(language, {
+      style: 'currency',
+      currency: code,
+      currencyDisplay: 'name',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    })
+      .formatToParts(1)
+      .find(part => part.type === 'currency')?.value;
+    if (name && name !== code) {
+      LOCALIZED_NAME_CACHE.set(cacheKey, name);
+      return name;
+    }
+  } catch {
+    // Some API-provided codes may not be recognized by the JS runtime.
+  }
+  return code;
 }
 
 export function getCurrencyKeywords(code: string): string {
@@ -370,14 +431,14 @@ export interface CurrencyItem {
   keywords: string;
 }
 
-export function buildCurrencyList(codes: string[]): CurrencyItem[] {
+export function buildCurrencyList(codes: string[], language = 'ru'): CurrencyItem[] {
   return codes
     .slice()
     .sort((a, b) => a.localeCompare(b))
     .map(code => ({
       code,
       flag: getFlagForCurrency(code),
-      name: getCurrencyName(code),
+      name: getCurrencyName(code, language),
       keywords: getCurrencyKeywords(code).toLowerCase(),
     }));
 }

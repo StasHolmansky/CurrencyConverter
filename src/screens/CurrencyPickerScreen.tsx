@@ -8,6 +8,7 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useAppColors } from '../theme';
 
 import { CurrencyItem } from '../utils/currencyList';
@@ -25,6 +26,7 @@ interface Props {
 
 const CurrencyPickerScreen: React.FC<Props> = ({ navigation, route }) => {
   const colors = useAppColors();
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const { onSelect, currencies } = route.params;
 
@@ -51,7 +53,7 @@ const CurrencyPickerScreen: React.FC<Props> = ({ navigation, route }) => {
             color: colors.textPrimary,
           },
         ]}
-        placeholder="Поиск (USD, рубль, Россия, Japan...)"
+        placeholder={t('currencyPicker.searchPlaceholder')}
         placeholderTextColor={colors.placeholder}
         value={search}
         onChangeText={setSearch}

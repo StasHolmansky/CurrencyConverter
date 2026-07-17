@@ -9,6 +9,7 @@ import {
   PanResponder,
 } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
+import { useTranslation } from 'react-i18next';
 import { AppColors } from '../theme';
 
 interface Props {
@@ -38,6 +39,7 @@ const CurrencyRow: React.FC<Props> = ({
   onDragEnd,
   isDragging,
 }) => {
+  const { t } = useTranslation();
   const swipeableRef = useRef<Swipeable>(null);
   const translateY = useRef(new Animated.Value(0)).current;
 
@@ -87,7 +89,7 @@ const CurrencyRow: React.FC<Props> = ({
         }}
       >
         <Animated.Text style={[styles.deleteText, { transform: [{ scale }] }]}>
-          Удалить
+          {t('common.delete')}
         </Animated.Text>
       </TouchableOpacity>
     );
@@ -138,7 +140,7 @@ const CurrencyRow: React.FC<Props> = ({
           />
           <View
             accessibilityRole="adjustable"
-            accessibilityLabel={`Перетащить ${currencyCode}`}
+            accessibilityLabel={t('main.dragA11y', { code: currencyCode })}
             style={styles.dragHandle}
             {...panResponder.panHandlers}
           >

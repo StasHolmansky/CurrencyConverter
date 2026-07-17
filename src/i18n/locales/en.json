@@ -1,0 +1,46 @@
+{
+  "common": {
+    "back": "Back",
+    "done": "Done",
+    "delete": "Delete",
+    "error": "Error"
+  },
+  "nav": {
+    "main": "Currency Converter",
+    "settings": "Settings",
+    "currencyPicker": "Choose currency",
+    "calculator": "Calculator",
+    "feedback": "Feedback"
+  },
+  "main": {
+    "settingsA11y": "Settings",
+    "addCurrency": "+ Add currency",
+    "calculator": "🧮 Calculator",
+    "limitTitle": "Limit",
+    "limitMessage": "You cannot add more than {{max}} currencies",
+    "dragA11y": "Drag {{code}}"
+  },
+  "settings": {
+    "appearance": "Appearance",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "systemHint": "System follows Android light/dark mode.",
+    "language": "Language",
+    "support": "Support",
+    "feedback": "Feedback and suggestions",
+    "feedbackHint": "Share ideas, wishes, or issues with the developer."
+  },
+  "currencyPicker": {
+    "searchPlaceholder": "Search by code, country, or currency…"
+  },
+  "feedback": {
+    "title": "Feedback and suggestions",
+    "body": "If you have ideas, wishes, or noticed something that can be improved in {{appName}}, please write to the support email below.",
+    "emailLabel": "Contact email",
+    "emailSubject": "{{appName}} feedback",
+    "note": "Thank you for helping make the app better.",
+    "emailUnavailableTitle": "Email app not found",
+    "emailUnavailableMessage": "Please send your message manually to {{email}}."
+  }
+}

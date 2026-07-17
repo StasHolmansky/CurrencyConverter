@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useAppColors } from '../theme';
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 
 const CalculatorScreen: React.FC<Props> = ({ navigation, route }) => {
   const colors = useAppColors();
+  const { t } = useTranslation();
   const [expression, setExpression] = useState('');
   const { onResult } = route.params;
 
@@ -25,7 +27,7 @@ const CalculatorScreen: React.FC<Props> = ({ navigation, route }) => {
         onResult(String(result));
         navigation.goBack();
       } catch {
-        setExpression('Ошибка');
+        setExpression(t('common.error'));
       }
     } else if (value === 'C') {
       setExpression('');

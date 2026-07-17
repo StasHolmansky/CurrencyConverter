@@ -8,20 +8,24 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { APP_DISPLAY_NAME, SUPPORT_EMAIL } from '../config/release';
 import { useAppColors } from '../theme';
 
 const FeedbackScreen = () => {
   const colors = useAppColors();
+  const { t } = useTranslation();
 
   const openEmail = () => {
-    const subject = encodeURIComponent(`Обратная связь ${APP_DISPLAY_NAME}`);
+    const subject = encodeURIComponent(
+      t('feedback.emailSubject', { appName: APP_DISPLAY_NAME }),
+    );
     const url = `mailto:${SUPPORT_EMAIL}?subject=${subject}`;
 
     Linking.openURL(url).catch(() => {
       Alert.alert(
-        'Почтовое приложение не найдено',
-        `Пожалуйста, отправьте сообщение вручную на ${SUPPORT_EMAIL}.`,
+        t('feedback.emailUnavailableTitle'),
+        t('feedback.emailUnavailableMessage', { email: SUPPORT_EMAIL }),
       );
     });
   };
@@ -38,15 +42,14 @@ const FeedbackScreen = () => {
           numberOfLines={2}
           ellipsizeMode="tail"
         >
-          Обратная связь и предложения
+          {t('feedback.title')}
         </Text>
         <Text
           style={[styles.body, { color: colors.textSecondary }]}
           numberOfLines={6}
           ellipsizeMode="tail"
         >
-          Если у вас есть идеи, пожелания или вы заметили, что в {APP_DISPLAY_NAME} можно
-          улучшить, напишите на почту поддержки ниже.
+          {t('feedback.body', { appName: APP_DISPLAY_NAME })}
         </Text>
 
         <Text
@@ -54,7 +57,7 @@ const FeedbackScreen = () => {
           numberOfLines={1}
           ellipsizeMode="tail"
         >
-          Почта для связи
+          {t('feedback.emailLabel')}
         </Text>
         <Pressable
           style={[styles.emailButton, { backgroundColor: colors.accent }]}
@@ -74,7 +77,7 @@ const FeedbackScreen = () => {
           numberOfLines={4}
           ellipsizeMode="tail"
         >
-          Спасибо, что помогаете делать приложение лучше.
+          {t('feedback.note')}
         </Text>
       </View>
     </ScrollView>

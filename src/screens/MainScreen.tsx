@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 import CurrencyRow from '../components/CurrencyRow';
 import { loadRates } from '../services/CurrencyService';
 import { buildCurrencyList } from '../utils/currencyList';
@@ -55,6 +56,7 @@ type CurrencyRowData = {
 
 const MainScreen = ({ navigation }: any) => {
   const { colors } = useAppTheme();
+  const { t, i18n } = useTranslation();
 
   const renderHeaderRight = useCallback(() => (
     <View style={styles.headerActions}>
@@ -62,12 +64,12 @@ const MainScreen = ({ navigation }: any) => {
         onPress={() => navigation.navigate('Settings')}
         style={[styles.headerButton, { borderColor: colors.border, backgroundColor: colors.card }]}
         accessibilityRole="button"
-        accessibilityLabel="Настройки"
+        accessibilityLabel={t('main.settingsA11y')}
       >
         <Text style={[styles.headerButtonText, { color: colors.textPrimary }]}>⚙️</Text>
       </TouchableOpacity>
     </View>
-  ), [navigation, colors.border, colors.card, colors.textPrimary]);
+  ), [navigation, colors.border, colors.card, colors.textPrimary, t]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -228,7 +230,7 @@ const MainScreen = ({ navigation }: any) => {
   };
 
   const handleOpenCurrencyPicker = (rowId: string) => {
-    const currencies = buildCurrencyList(Object.keys(rates));
+    const currencies = buildCurrencyList(Object.keys(rates), i18n.language);
     navigation.navigate('CurrencyPicker', {
       currencies,
       onSelect: (code: string, flag: string) => {
@@ -252,10 +254,13 @@ const MainScreen = ({ navigation }: any) => {
 
   const addNewCurrency = () => {
     if (rows.length >= MAX_ROWS) {
-      Alert.alert('Лимит', `Нельзя добавить больше ${MAX_ROWS} валют`);
+      Alert.alert(
+        t('main.limitTitle'),
+        t('main.limitMessage', { max: MAX_ROWS }),
+      );
       return;
     }
-    const currencies = buildCurrencyList(Object.keys(rates));
+    const currencies = buildCurrencyList(Object.keys(rates), i18n.language);
     navigation.navigate('CurrencyPicker', {
       currencies,
       onSelect: (code: string, flag: string) => {
@@ -320,7 +325,9 @@ const MainScreen = ({ navigation }: any) => {
             ]}
             onPress={addNewCurrency}
           >
-            <Text style={[styles.addText, { color: colors.textPrimary }]}>+ Добавить валюту</Text>
+            <Text style={[styles.addText, { color: colors.textPrimary }]}>
+              {t('main.addCurrency')}
+            </Text>
           </TouchableOpacity>
         )}
       </KeyboardAwareScrollView>
@@ -331,13 +338,17 @@ const MainScreen = ({ navigation }: any) => {
             style={[styles.toolbarButton, { backgroundColor: colors.card, borderColor: colors.border }]}
             onPress={handleOpenCalculator}
           >
-            <Text style={[styles.toolbarButtonText, { color: colors.textPrimary }]}>🧮 Калькулятор</Text>
+            <Text style={[styles.toolbarButtonText, { color: colors.textPrimary }]}>
+              {t('main.calculator')}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.toolbarDone}
             onPress={() => Keyboard.dismiss()}
           >
-            <Text style={[styles.toolbarDoneText, { color: colors.accent }]}>Готово</Text>
+            <Text style={[styles.toolbarDoneText, { color: colors.accent }]}>
+              {t('common.done')}
+            </Text>
           </TouchableOpacity>
         </Animated.View>
       )}

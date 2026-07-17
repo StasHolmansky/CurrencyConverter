@@ -1,0 +1,46 @@
+{
+  "common": {
+    "back": "Retour",
+    "done": "Terminé",
+    "delete": "Supprimer",
+    "error": "Erreur"
+  },
+  "nav": {
+    "main": "Convertisseur de devises",
+    "settings": "Paramètres",
+    "currencyPicker": "Choisir une devise",
+    "calculator": "Calculatrice",
+    "feedback": "Retour"
+  },
+  "main": {
+    "settingsA11y": "Paramètres",
+    "addCurrency": "+ Ajouter une devise",
+    "calculator": "🧮 Calculatrice",
+    "limitTitle": "Limite",
+    "limitMessage": "Vous ne pouvez pas ajouter plus de {{max}} devises",
+    "dragA11y": "Déplacer {{code}}"
+  },
+  "settings": {
+    "appearance": "Apparence",
+    "system": "Système",
+    "light": "Clair",
+    "dark": "Sombre",
+    "systemHint": "Système suit le mode clair/sombre d'Android.",
+    "language": "Langue",
+    "support": "Assistance",
+    "feedback": "Retours et suggestions",
+    "feedbackHint": "Partagez vos idées, souhaits ou problèmes avec le développeur."
+  },
+  "currencyPicker": {
+    "searchPlaceholder": "Rechercher par code, pays ou devise…"
+  },
+  "feedback": {
+    "title": "Retours et suggestions",
+    "body": "Si vous avez des idées, des souhaits ou remarquez quelque chose à améliorer dans {{appName}}, écrivez à l’adresse de support ci-dessous.",
+    "emailLabel": "Adresse de contact",
+    "emailSubject": "Retour sur {{appName}}",
+    "note": "Merci d’aider à améliorer l’application.",
+    "emailUnavailableTitle": "Application e-mail introuvable",
+    "emailUnavailableMessage": "Veuillez envoyer votre message manuellement à {{email}}."
+  }
+}

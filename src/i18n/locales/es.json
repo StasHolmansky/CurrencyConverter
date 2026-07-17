@@ -1,0 +1,46 @@
+{
+  "common": {
+    "back": "Atrás",
+    "done": "Listo",
+    "delete": "Eliminar",
+    "error": "Error"
+  },
+  "nav": {
+    "main": "Conversor de divisas",
+    "settings": "Ajustes",
+    "currencyPicker": "Elegir divisa",
+    "calculator": "Calculadora",
+    "feedback": "Comentarios"
+  },
+  "main": {
+    "settingsA11y": "Ajustes",
+    "addCurrency": "+ Añadir divisa",
+    "calculator": "🧮 Calculadora",
+    "limitTitle": "Límite",
+    "limitMessage": "No puedes añadir más de {{max}} divisas",
+    "dragA11y": "Arrastrar {{code}}"
+  },
+  "settings": {
+    "appearance": "Apariencia",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "systemHint": "Sistema sigue el modo claro/oscuro de Android.",
+    "language": "Idioma",
+    "support": "Soporte",
+    "feedback": "Comentarios y sugerencias",
+    "feedbackHint": "Comparte ideas, deseos o problemas con el desarrollador."
+  },
+  "currencyPicker": {
+    "searchPlaceholder": "Buscar por código, país o divisa…"
+  },
+  "feedback": {
+    "title": "Comentarios y sugerencias",
+    "body": "Si tienes ideas, deseos o notas algo que se pueda mejorar en {{appName}}, escribe al correo de soporte que aparece abajo.",
+    "emailLabel": "Correo de contacto",
+    "emailSubject": "Comentarios sobre {{appName}}",
+    "note": "Gracias por ayudar a mejorar la app.",
+    "emailUnavailableTitle": "No se encontró una app de correo",
+    "emailUnavailableMessage": "Envía tu mensaje manualmente a {{email}}."
+  }
+}

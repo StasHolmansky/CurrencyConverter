@@ -1,7 +1,9 @@
 import React from 'react';
+import './src/i18n';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Pressable, StyleSheet, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import MainScreen from './src/screens/MainScreen';
 import CurrencyPickerScreen from './src/screens/CurrencyPickerScreen';
 import CalculatorScreen from './src/screens/CalculatorScreen';
@@ -9,6 +11,7 @@ import FeedbackScreen from './src/screens/FeedbackScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import { ThemeProvider, useAppTheme } from './src/theme';
 import type { CurrencyItem } from './src/utils/currencyList';
+import { LanguageProvider } from './src/i18n/LanguageContext';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -26,20 +29,24 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 function HeaderBackButton({ tintColor, onPress }: { tintColor?: string; onPress?: () => void }) {
+  const { t } = useTranslation();
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Назад"
+      accessibilityLabel={t('common.back')}
       onPress={onPress}
       style={styles.backButton}
     >
-      <Text style={[styles.backButtonText, { color: tintColor }]}>‹ Назад</Text>
+      <Text style={[styles.backButtonText, { color: tintColor }]}>
+        ‹ {t('common.back')}
+      </Text>
     </Pressable>
   );
 }
 
 const AppNavigator = () => {
   const { navTheme, colors } = useAppTheme();
+  const { t } = useTranslation();
 
   return (
     <NavigationContainer theme={navTheme}>
@@ -52,22 +59,22 @@ const AppNavigator = () => {
           cardStyle: { backgroundColor: colors.background },
         }}
       >
-        <Stack.Screen name="Main" component={MainScreen} options={{ title: 'Конвертер валют' }} />
+        <Stack.Screen name="Main" component={MainScreen} options={{ title: t('nav.main') }} />
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
           options={{
-            title: 'Настройки',
+            title: t('nav.settings'),
             headerLeft: HeaderBackButton,
           }}
         />
-        <Stack.Screen name="CurrencyPicker" component={CurrencyPickerScreen} options={{ title: 'Выбор валюты' }} />
-        <Stack.Screen name="Calculator" component={CalculatorScreen} options={{ title: 'Калькулятор' }} />
+        <Stack.Screen name="CurrencyPicker" component={CurrencyPickerScreen} options={{ title: t('nav.currencyPicker') }} />
+        <Stack.Screen name="Calculator" component={CalculatorScreen} options={{ title: t('nav.calculator') }} />
         <Stack.Screen
           name="Feedback"
           component={FeedbackScreen}
           options={{
-            title: 'Обратная связь',
+            title: t('nav.feedback'),
             headerLeft: HeaderBackButton,
           }}
         />
@@ -88,9 +95,11 @@ const styles = StyleSheet.create({
 });
 
 const App = () => (
-  <ThemeProvider>
-    <AppNavigator />
-  </ThemeProvider>
+  <LanguageProvider>
+    <ThemeProvider>
+      <AppNavigator />
+    </ThemeProvider>
+  </LanguageProvider>
 );
 
 export default App;

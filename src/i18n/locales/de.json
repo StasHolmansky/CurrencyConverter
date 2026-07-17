@@ -1,0 +1,46 @@
+{
+  "common": {
+    "back": "Zurück",
+    "done": "Fertig",
+    "delete": "Löschen",
+    "error": "Fehler"
+  },
+  "nav": {
+    "main": "Währungsrechner",
+    "settings": "Einstellungen",
+    "currencyPicker": "Währung wählen",
+    "calculator": "Rechner",
+    "feedback": "Feedback"
+  },
+  "main": {
+    "settingsA11y": "Einstellungen",
+    "addCurrency": "+ Währung hinzufügen",
+    "calculator": "🧮 Rechner",
+    "limitTitle": "Limit",
+    "limitMessage": "Sie können nicht mehr als {{max}} Währungen hinzufügen",
+    "dragA11y": "{{code}} verschieben"
+  },
+  "settings": {
+    "appearance": "Darstellung",
+    "system": "System",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "systemHint": "System folgt dem Android Hell-/Dunkelmodus.",
+    "language": "Sprache",
+    "support": "Support",
+    "feedback": "Feedback und Vorschläge",
+    "feedbackHint": "Teilen Sie Ideen, Wünsche oder Probleme mit dem Entwickler."
+  },
+  "currencyPicker": {
+    "searchPlaceholder": "Nach Code, Land oder Währung suchen…"
+  },
+  "feedback": {
+    "title": "Feedback und Vorschläge",
+    "body": "Wenn Sie Ideen, Wünsche oder Verbesserungsvorschläge für {{appName}} haben, schreiben Sie bitte an die unten angegebene Support-E-Mail.",
+    "emailLabel": "Kontakt-E-Mail",
+    "emailSubject": "Feedback zu {{appName}}",
+    "note": "Danke, dass Sie helfen, die App zu verbessern.",
+    "emailUnavailableTitle": "E-Mail-App nicht gefunden",
+    "emailUnavailableMessage": "Bitte senden Sie Ihre Nachricht manuell an {{email}}."
+  }
+}

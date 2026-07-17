@@ -6,14 +6,13 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { APP_BUILD, APP_DISPLAY_NAME, APP_VERSION } from '../config/release';
+import { SUPPORTED_LANGUAGES } from '../i18n';
+import { useLanguage } from '../i18n/LanguageContext';
 import { useTheme, type ThemePreference } from '../theme';
 
-const THEME_OPTIONS: { key: ThemePreference; label: string }[] = [
-  { key: 'system', label: 'Системная' },
-  { key: 'light', label: 'Светлая' },
-  { key: 'dark', label: 'Тёмная' },
-];
+const THEME_OPTIONS: ThemePreference[] = ['system', 'light', 'dark'];
 
 type Props = {
   navigation: {
@@ -23,6 +22,8 @@ type Props = {
 
 const SettingsScreen = ({ navigation }: Props) => {
   const { colors, preference, setPreference } = useTheme();
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   return (
     <ScrollView
@@ -35,10 +36,10 @@ const SettingsScreen = ({ navigation }: Props) => {
         numberOfLines={1}
         ellipsizeMode="tail"
       >
-        Оформление
+        {t('settings.appearance')}
       </Text>
       <View style={styles.themeRow}>
-        {THEME_OPTIONS.map(({ key, label }) => {
+        {THEME_OPTIONS.map(key => {
           const active = preference === key;
           return (
             <Pressable
@@ -65,7 +66,7 @@ const SettingsScreen = ({ navigation }: Props) => {
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {label}
+                {t(`settings.${key}`)}
               </Text>
             </Pressable>
           );
@@ -76,7 +77,7 @@ const SettingsScreen = ({ navigation }: Props) => {
         numberOfLines={3}
         ellipsizeMode="tail"
       >
-        Системная следует режиму Android.
+        {t('settings.systemHint')}
       </Text>
 
       <Text
@@ -84,7 +85,48 @@ const SettingsScreen = ({ navigation }: Props) => {
         numberOfLines={1}
         ellipsizeMode="tail"
       >
-        Поддержка
+        {t('settings.language')}
+      </Text>
+      <View style={styles.themeRow}>
+        {SUPPORTED_LANGUAGES.map(({ code, label }) => {
+          const active = language === code;
+          return (
+            <Pressable
+              key={code}
+              onPress={() => setLanguage(code)}
+              style={[
+                styles.themeChip,
+                {
+                  backgroundColor: active
+                    ? colors.chipActiveBg
+                    : colors.chipInactiveBg,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.themeChipText,
+                  {
+                    color: active
+                      ? colors.chipActiveText
+                      : colors.chipInactiveText,
+                  },
+                ]}
+                numberOfLines={1}
+              >
+                {label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
+      <Text
+        style={[styles.label, { color: colors.textSecondary }]}
+        numberOfLines={1}
+        ellipsizeMode="tail"
+      >
+        {t('settings.support')}
       </Text>
       <Pressable
         style={[
@@ -99,14 +141,14 @@ const SettingsScreen = ({ navigation }: Props) => {
             numberOfLines={1}
             ellipsizeMode="tail"
           >
-            Обратная связь и предложения
+            {t('settings.feedback')}
           </Text>
           <Text
             style={[styles.feedbackHint, { color: colors.textSecondary }]}
             numberOfLines={2}
             ellipsizeMode="tail"
           >
-            Идеи, пожелания или проблемы можно отправить разработчику.
+            {t('settings.feedbackHint')}
           </Text>
         </View>
         <Text
