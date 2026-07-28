@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import CurrencyRow from '../components/CurrencyRow';
 import { loadRates } from '../services/CurrencyService';
 import { buildCurrencyList } from '../utils/currencyList';
+import { formatConvertedAmount } from '../utils/convertedAmountFormat';
 import { useAppTheme } from '../theme';
 
 function formatAmount(value: string): string {
@@ -51,7 +52,8 @@ function convertAmount(
 ): string {
   const fromRate = rates[fromCode] || 1;
   const toRate = rates[toCode] || 1;
-  return ((amount / fromRate) * toRate).toFixed(2);
+  const converted = (amount / fromRate) * toRate;
+  return formatConvertedAmount(converted, toCode);
 }
 
 const STORAGE_ROWS_KEY = 'currency_rows';
@@ -173,7 +175,10 @@ const MainScreen = ({ navigation }: any) => {
           return { ...row, amount: baseAmount.toString() };
         }
         const rate = currentRates[row.code] || 1;
-        return { ...row, amount: (amountInUSD * rate).toFixed(2) };
+        return {
+          ...row,
+          amount: formatConvertedAmount(amountInUSD * rate, row.code),
+        };
       });
     });
   };
@@ -199,7 +204,10 @@ const MainScreen = ({ navigation }: any) => {
           return { ...row, amount: raw };
         }
         const rate = rates[row.code] || 1;
-        return { ...row, amount: (amountInUSD * rate).toFixed(2) };
+        return {
+          ...row,
+          amount: formatConvertedAmount(amountInUSD * rate, row.code),
+        };
       });
     });
   };
