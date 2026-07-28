@@ -1,14 +1,12 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
   Animated,
   PanResponder,
 } from 'react-native';
-import { Swipeable } from 'react-native-gesture-handler';
+import { Pressable, Swipeable, TextInput } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
 import { AppColors } from '../theme';
 
@@ -41,6 +39,7 @@ const CurrencyRow: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const swipeableRef = useRef<Swipeable>(null);
+  const [amountFocused, setAmountFocused] = useState(false);
   const translateY = useRef(new Animated.Value(0)).current;
 
   const resetDragPosition = () => {
@@ -81,7 +80,7 @@ const CurrencyRow: React.FC<Props> = ({
     });
 
     return (
-      <TouchableOpacity
+      <Pressable
         style={[styles.deleteAction, { backgroundColor: colors.danger }]}
         onPress={() => {
           swipeableRef.current?.close();
@@ -91,7 +90,7 @@ const CurrencyRow: React.FC<Props> = ({
         <Animated.Text style={[styles.deleteText, { transform: [{ scale }] }]}>
           {t('common.delete')}
         </Animated.Text>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
@@ -105,10 +104,12 @@ const CurrencyRow: React.FC<Props> = ({
     >
       <Swipeable
         ref={swipeableRef}
-        enabled={!isDragging}
+        enabled={!isDragging && !amountFocused}
         renderRightActions={onDelete ? renderRightActions : undefined}
         overshootRight={false}
         friction={2}
+        dragOffsetFromRightEdge={12}
+        rightThreshold={40}
       >
         <View
           style={[
@@ -119,25 +120,53 @@ const CurrencyRow: React.FC<Props> = ({
             },
           ]}
         >
-          <TouchableOpacity onPress={onPressCurrency} style={styles.currencySelector}>
+          <Pressable onPress={onPressCurrency} style={styles.currencySelector}>
             <Text style={styles.flag}>{flag}</Text>
             <Text style={[styles.code, { color: colors.textPrimary }]}>{currencyCode}</Text>
-          </TouchableOpacity>
-          <TextInput
-            style={[
-              styles.input,
-              {
-                color: colors.textPrimary,
-                borderBottomColor: colors.border,
-              },
-            ]}
-            keyboardType="decimal-pad"
-            value={amount}
-            onChangeText={onAmountChange}
-            onFocus={onFocus}
-            placeholder="0"
-            placeholderTextColor={colors.placeholder}
-          />
+          </Pressable>
+          {amountFocused ? (
+            <TextInput
+              style={[
+                styles.input,
+                {
+                  color: colors.textPrimary,
+                  borderBottomColor: colors.border,
+                },
+              ]}
+              keyboardType="decimal-pad"
+              value={amount}
+              onChangeText={onAmountChange}
+              onFocus={() => {
+                setAmountFocused(true);
+                onFocus?.();
+              }}
+              onBlur={() => setAmountFocused(false)}
+              placeholder="0"
+              placeholderTextColor={colors.placeholder}
+              autoFocus
+            />
+          ) : (
+            <Pressable
+              style={[
+                styles.input,
+                styles.inputPressable,
+                { borderBottomColor: colors.border },
+              ]}
+              onPress={() => setAmountFocused(true)}
+              accessibilityRole="button"
+              accessibilityLabel={`${currencyCode} ${amount || '0'}`}
+            >
+              <Text
+                style={[
+                  styles.inputText,
+                  { color: amount ? colors.textPrimary : colors.placeholder },
+                ]}
+                numberOfLines={1}
+              >
+                {amount || '0'}
+              </Text>
+            </Pressable>
+          )}
           <View
             accessibilityRole="adjustable"
             accessibilityLabel={t('main.dragA11y', { code: currencyCode })}
@@ -177,6 +206,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     padding: 8,
     borderBottomWidth: 1,
+    textAlign: 'right',
+  },
+  inputPressable: {
+    justifyContent: 'center',
+  },
+  inputText: {
+    fontSize: 20,
     textAlign: 'right',
   },
   dragHandle: {
