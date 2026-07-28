@@ -43,6 +43,17 @@ function normalizeDecimalInput(value: string): string {
   return normalized;
 }
 
+function convertAmount(
+  amount: number,
+  fromCode: string,
+  toCode: string,
+  rates: Record<string, number>,
+): string {
+  const fromRate = rates[fromCode] || 1;
+  const toRate = rates[toCode] || 1;
+  return ((amount / fromRate) * toRate).toFixed(2);
+}
+
 const STORAGE_ROWS_KEY = 'currency_rows';
 const MAX_ROWS = 10;
 const ROW_DRAG_STEP = 76;
@@ -234,9 +245,13 @@ const MainScreen = ({ navigation }: any) => {
     navigation.navigate('CurrencyPicker', {
       currencies,
       onSelect: (code: string, flag: string) => {
-        setRows(prev => prev.map(row =>
-          row.id === rowId ? { ...row, code, flag, amount: '0' } : row
-        ));
+        setRows(prev => prev.map(row => {
+          if (row.id !== rowId) return row;
+          const amount = Object.keys(rates).length === 0
+            ? row.amount
+            : convertAmount(parseFloat(row.amount) || 0, row.code, code, rates);
+          return { ...row, code, flag, amount };
+        }));
       },
     });
   };
@@ -264,13 +279,22 @@ const MainScreen = ({ navigation }: any) => {
     navigation.navigate('CurrencyPicker', {
       currencies,
       onSelect: (code: string, flag: string) => {
-        const newRow = {
-          id: Date.now().toString(),
-          code,
-          flag,
-          amount: '0',
-        };
-        setRows(prev => [...prev, newRow]);
+        setRows(prev => {
+          const refRow = prev.find(row => (parseFloat(row.amount) || 0) !== 0) ?? prev[0];
+          const amount = !refRow || Object.keys(rates).length === 0
+            ? '0'
+            : convertAmount(parseFloat(refRow.amount) || 0, refRow.code, code, rates);
+
+          return [
+            ...prev,
+            {
+              id: Date.now().toString(),
+              code,
+              flag,
+              amount,
+            },
+          ];
+        });
       },
     });
   };

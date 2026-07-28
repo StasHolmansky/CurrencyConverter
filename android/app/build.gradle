@@ -84,9 +84,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.currencyconverter"
+    namespace "com.stas.currencyconverter"
     defaultConfig {
-        applicationId "com.currencyconverter"
+        applicationId "com.stas.currencyconverter"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2

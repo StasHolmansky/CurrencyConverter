@@ -8,9 +8,9 @@ This repository contains the release defaults and runbooks needed to ship `Curre
 | --- | --- |
 | Product name | `Currency Converter` |
 | React Native module name | `CurrencyConverter` |
-| Android application ID | `com.currencyconverter` |
-| Store version | `1.0.0` |
-| Build number | `1` |
+| Android application ID | `com.stas.currencyconverter` |
+| Store version | `1.0.1` |
+| Build number | `2` |
 | Android signing config | `android/key.properties` |
 | Release keystore template | `android/key.properties.example` |
 | Support email | `stanislavkholmanskii@gmail.com` |

@@ -1,4 +1,4 @@
-package com.currencyconverter
+package com.stas.currencyconverter
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
