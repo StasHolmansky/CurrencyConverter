@@ -44,6 +44,23 @@ function normalizeDecimalInput(value: string): string {
   return normalized;
 }
 
+/** Remove leading zeros after editing ends: "000073.20" → "73.20". */
+function stripLeadingZeros(value: string): string {
+  const normalized = normalizeDecimalInput(value);
+  if (!normalized) {
+    return '0';
+  }
+
+  const [intPart = '', fracPart] = normalized.split('.');
+  const strippedInt = intPart.replace(/^0+(?=\d)/, '') || '0';
+
+  if (fracPart !== undefined) {
+    return fracPart.length > 0 ? `${strippedInt}.${fracPart}` : strippedInt;
+  }
+
+  return strippedInt;
+}
+
 function convertAmount(
   amount: number,
   fromCode: string,
@@ -135,7 +152,13 @@ const MainScreen = ({ navigation }: any) => {
 
       const stored = await AsyncStorage.getItem(STORAGE_ROWS_KEY);
       if (stored) {
-        setRows(JSON.parse(stored));
+        const parsed = JSON.parse(stored) as CurrencyRowData[];
+        setRows(
+          parsed.map(row => ({
+            ...row,
+            amount: stripLeadingZeros(row.amount),
+          })),
+        );
       } else {
         const defaultRows = [
           { id: Date.now().toString(), code: 'USD', flag: '🇺🇸', amount: '0' },
@@ -209,6 +232,22 @@ const MainScreen = ({ navigation }: any) => {
           amount: formatConvertedAmount(amountInUSD * rate, row.code),
         };
       });
+    });
+  };
+
+  const handleAmountBlur = (id: string) => {
+    setRows(prev => {
+      const row = prev.find(r => r.id === id);
+      if (!row) {
+        return prev;
+      }
+
+      const cleaned = stripLeadingZeros(row.amount);
+      if (cleaned === row.amount) {
+        return prev;
+      }
+
+      return prev.map(r => (r.id === id ? { ...r, amount: cleaned } : r));
     });
   };
 
@@ -340,6 +379,7 @@ const MainScreen = ({ navigation }: any) => {
             onPressCurrency={() => handleOpenCurrencyPicker(row.id)}
             onAmountChange={(text) => handleAmountChange(row.id, text)}
             onFocus={() => setActiveRowId(row.id)}
+            onBlur={() => handleAmountBlur(row.id)}
             onDelete={() => handleDeleteRow(row.id)}
             onDragStart={rows.length > 1 ? () => handleDragStart(row.id) : undefined}
             onDragEnd={rows.length > 1 ? (distanceY) => handleDragEnd(row.id, distanceY) : undefined}

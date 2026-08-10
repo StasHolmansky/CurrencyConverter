@@ -18,6 +18,7 @@ interface Props {
   onPressCurrency: () => void;
   onAmountChange: (text: string) => void;
   onFocus?: () => void;
+  onBlur?: () => void;
   onDelete?: () => void;
   onDragStart?: () => void;
   onDragEnd?: (distanceY: number) => void;
@@ -32,6 +33,7 @@ const CurrencyRow: React.FC<Props> = ({
   onPressCurrency,
   onAmountChange,
   onFocus,
+  onBlur,
   onDelete,
   onDragStart,
   onDragEnd,
@@ -140,7 +142,10 @@ const CurrencyRow: React.FC<Props> = ({
                 setAmountFocused(true);
                 onFocus?.();
               }}
-              onBlur={() => setAmountFocused(false)}
+              onBlur={() => {
+                onBlur?.();
+                setAmountFocused(false);
+              }}
               placeholder="0"
               placeholderTextColor={colors.placeholder}
               autoFocus
